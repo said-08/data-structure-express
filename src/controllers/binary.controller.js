@@ -37,21 +37,45 @@ function constructBinaryTree(numbers) {
   return root;
 }
 
-function printTree(root, space = 0, count = 5) {
-  if (!root) {
-    return;
+function printTree(root, space = 0, count = 5, result = []) {
+  // if (!root) {
+  //   return;
+  // }
+
+  // space += count;
+
+  // // Imprimir el subárbol derecho
+  // printTree(root.right, space);
+
+  // // Imprimir el nodo actual
+  // console.log(" ".repeat(space - count) + root.value);
+  // result.push({ value: root.value, spaces: space - count });
+
+  // // Imprimir el subárbol izquierdo
+  // printTree(root.left, space);
+  // return result;
+
+  const nodes = [];
+
+  function traverse(node, space, count = 5) {
+    if (!node) {
+      return;
+    }
+
+    space += count;
+
+    nodes.push({ value: node.value, spaces: space });
+    console.log(" ".repeat(space - count) + root.value);
+
+    // Recorrer el subárbol izquierdo
+    traverse(node.left, space + count);
+
+    // Recorrer el subárbol derecho
+    traverse(node.right, space + count);
   }
 
-  space += count;
-
-  // Imprimir el subárbol derecho
-  printTree(root.right, space);
-
-  // Imprimir el nodo actual
-  console.log(" ".repeat(space - count) + root.value);
-
-  // Imprimir el subárbol izquierdo
-  printTree(root.left, space);
+  traverse(root, space);
+  return nodes;
 }
 
 // Función para manejar la inserción de un nuevo nodo en el árbol
@@ -112,4 +136,21 @@ async function deleteNode(req, res) {
   }
 }
 
-export { addNode, searchNode, deleteNode };
+async function showData(req,res) {
+
+  const startTime = process.hrtime();
+  const treeNodes = await Tree.find().lean();
+  const numberos = treeNodes.map(node => node.number);
+  const root = constructBinaryTree(numberos);
+  const treeData = printTree(root);
+
+    // Enviar los datos como respuesta al cliente
+    console.log("data", treeData)
+
+    const elapsedTime = process.hrtime(startTime);
+  const totalTime = elapsedTime[0] * 1000 + elapsedTime[1] / 1000000;
+  const secTime = totalTime / 1000
+    res.render('partials/binaryTree', { treeData: treeData, elapsedTime: totalTime, sec: secTime})
+}
+
+export { addNode, searchNode, deleteNode, showData };

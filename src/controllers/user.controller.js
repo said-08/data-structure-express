@@ -19,8 +19,12 @@ function mostrarListaEnlazada(listaEnlazada) {
 }
 
 export const getUsers = async(req, res) => {
+  const flag = req.body;
+  console.log("flag",flag)
 
   try {
+    const startTime = process.hrtime();
+
     const users = await User.find().lean()
     // Crea la lista enlazada
     users.forEach(usuario => {
@@ -30,10 +34,11 @@ export const getUsers = async(req, res) => {
     });
 
     // Muestra la lista enlazada por consola
-    console.time("Tiempo de visualización en traer a los parceros");
     mostrarListaEnlazada(listaEnlazada);
-    console.timeEnd("Tiempo de visualización en traer a los parceros");
-    res.render('partials/index', { users: users })
+    const elapsedTime = process.hrtime(startTime);
+    const totalTime = elapsedTime[0] * 1000 + elapsedTime[1] / 1000000;
+    const secTime = totalTime / 1000
+    res.render('partials/index', { users: users, elapsedTime: totalTime, sec: secTime })
   } catch (error) {
     console.error('Error al obtener los primeros veinte documentos:', error);
     res.status(500).json({ mensaje: 'Error interno del servidor' });

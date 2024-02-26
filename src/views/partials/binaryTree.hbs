@@ -18,4 +18,17 @@
 
   <button class="btn btn-danger" type="submit">Remove</button>
 </form>
+<form action="/binary/show">
+  <button class="btn btn-warning" type="submit">Show</button>
+</form>
+</div>
+
+<div>
+  <ul>
+  {{#each treeData}}
+    <li>{{this.value}}</li>
+  {{/each}}
+</ul>
+<p>Tiempo de ejecución: {{ elapsedTime }} milisegundos</p>
+<p>Tiempo de ejecución: {{ sec }} segundos</p>
 </div>
